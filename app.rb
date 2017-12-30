@@ -35,8 +35,17 @@ model = RubyFann::Standard.new(
 # mean-squared-error
 model.train_on_data(train, 5000, 500, 0.01)
 
-# Predict single class
-prediction = model.run([45, 85])
+predicted = []
 
-# Round the output to get the prediction
-puts "Algorithm predicted class: #{prediction.map(&:round)}"
+test_x_data.each do |params|
+  predicted.push(model.run(params).map(&:round))
+end
+
+correct_data = predicted.collect.with_index do |e, i|
+  e == test_y_data[i] ? 1 : 0
+end
+
+correct_sum = correct_data.inject { |sum, e| sum + e }
+
+puts "Accuracy: #{((correct_sum.to_f / test_set_size) * 100).round(2)}%"
+puts "Test set of size #{test_size_percentange}%"
