@@ -17,3 +17,26 @@ test_x_data = x_data[0..(test_set_size - 1)]
 test_y_data = y_data[0..(test_set_size - 1)]
 training_x_data = x_data[test_set_size..x_data.size]
 training_y_data = y_data[test_set_size..y_data.size]
+
+# Setup training data model
+train = RubyFann::TrainData.new(
+  inputs: training_x_data,
+  desired_outputs: training_y_data
+)
+
+# Setup model and train using training data
+model = RubyFann::Standard.new(
+  num_inputs: 2,
+  hidden_neurons: [6],
+  num_outputs: 1
+)
+
+# 5000 max_epochs, 500 errors between reports and 0.01 desired
+# mean-squared-error
+model.train_on_data(train, 5000, 500, 0.01)
+
+# Predict single class
+prediction = model.run([45, 85])
+
+# Round the output to get the prediction
+puts "Algorithm predicted class: #{prediction.map(&:round)}"
